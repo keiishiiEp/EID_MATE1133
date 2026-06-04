@@ -1,7 +1,7 @@
 # Evaluación Integrada de Desempeño (EID) - MATE1133
 **Analizador y visualizador de límites matemáticos**
 
-Proyecto desarrollado para la asignatura de Cálculo I (MATE1133) de la Universidad Católica de Temuco . 
+Proyecto desarrollado para la asignatura de Cálculo básico (MATE1133) de la Universidad Católica de Temuco . 
 Consiste en una plataforma tecnológica de apoyo académico construida íntegramente en Python, diseñada para evaluar límites de forma analítica 
 y graficar el comportamiento de las funciones sin el uso de librerías de procesamiento numérico de arreglos.
 
@@ -25,7 +25,7 @@ El código fuente ha sido modularizado para separar la lógica matemática de la
 ## Equipo de desarrollo
 * **Keisy D. Epul Landero (https://github.com/keiishiiEp)**
 * **María R. Henríquez Cayuqueo (https://github.com/mhenriquez2026-maker)**
-* **Josefa I. Duarte Inostroza(https://github.com/jduarte2026-hue)**
+* **Josefa I. Duarte Inostroza (https://github.com/jduarte2026-hue)**
 
 ---
 ## Requisitos de instalación
