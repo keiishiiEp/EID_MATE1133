@@ -36,14 +36,14 @@ def procesar_limite(func_str, h_str):
         y_vals = []
         
         if h_val == sp.oo:
-            inicio, paso, puntos = 0, 1.0, 50
+            inicio, paso, puntos = 0, 0.1, 500
             marcar_asintota, h_float = False, None
         elif h_val == -sp.oo:
-            inicio, paso, puntos = -50, 1.0, 50
+            inicio, paso, puntos = -50, 0.1, 500
             marcar_asintota, h_float = False, None
         else:
             h_float = float(h_val)
-            inicio, paso, puntos = h_float - 5, 0.2, 500
+            inicio, paso, puntos = h_float - 5, 0.02, 500
             marcar_asintota = True
 
         for i in range(puntos + 1):
@@ -62,27 +62,38 @@ def procesar_limite(func_str, h_str):
                 y_vals.append(val_y)
             except Exception:
                 continue 
-
+            
+            # ====================================================
+        # Validación - Verifica si se generaron puntos numéricos
+        y_validos_test = [y for y in y_vals if not math.isnan(y)]
+        
+        if not y_validos_test:
+            raise ValueError("Expresión no válida o no reconocible numéricamente.")
         # Evaluamos si el punto exacto f(h) existe
         punto_exacto = None
         try:
-            eval_h = funcion.subs('x', h_float).evalf()
+            eval_h = funcion.subs(x, h_float).evalf()
             if eval_h.is_real:
                 punto_exacto = float(eval_h)
         except Exception:
             pass
 
+        # Conversor seguro para límites oscilantes
+        def a_float(val):
+            try: return float(val)
+            except Exception: return None
+
         return {
             "exito": True,
-            "limite": limite_resultado,
+            "limite": str(limite_resultado),
             "x_vals": x_vals,
             "y_vals": y_vals,
             "marcar_asintota": marcar_asintota,
             "h_float": h_float,
             "tipo_limite": tipo_limite,
             "salto": salto,
-            "lim_izq": float(lim_izq) if lim_izq.is_real else None,
-            "lim_der": float(lim_der) if lim_der.is_real else None,
+            "lim_izq": a_float(lim_izq),
+            "lim_der": a_float(lim_der),
             "punto_exacto": punto_exacto
         }
         

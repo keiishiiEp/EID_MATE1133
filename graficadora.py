@@ -18,7 +18,60 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     boton_volver = ctk.CTkButton(frame_barra, text="[X] Cerrar", fg_color="black", text_color="white", hover_color="red", corner_radius=0, border_width=0, font=("Courier New", 12, "bold"), width=80, command=comando_volver)
     boton_volver.pack(side="right")
 
-    # --- CONTROLES ---
+    
+    # =========================================================
+    # Función ventana flotante- control de instancia
+    # =========================================================
+    ventana_guia = None  # Variable rastreadora
+
+    def abrir_guia():
+        nonlocal ventana_guia # Le dice a Python que use la variable de arriba
+        
+        # Condición: Si la ventana NO existe o si el usuario ya la cerró...
+        if ventana_guia is None or not ventana_guia.winfo_exists():
+            # ...entonces la creamos desde cero
+            ventana_guia = ctk.CTkToplevel(ventana_maestra)
+            ventana_guia.title("guia_sintaxis.txt")
+            ventana_guia.geometry("380x360")
+            ventana_guia.configure(fg_color="#D1D1D0")
+            ventana_guia.attributes('-topmost', True) 
+
+            frame_guia = ctk.CTkFrame(ventana_guia, fg_color="#F4F0E6", border_width=3, border_color="black", corner_radius=0)
+            frame_guia.pack(pady=15, padx=15, fill="both", expand=True)
+
+            lbl_tit = ctk.CTkLabel(frame_guia, text="> SINTAXIS MATEMÁTICA", font=("Courier New", 15, "bold"), text_color="black")
+            lbl_tit.pack(pady=(15, 10))
+
+            texto_ayuda = (
+                " * Potencia     : ** (Ej: x**2)\n"
+                " * Raíz cuad.   : sqrt() (Ej: sqrt(x))\n"
+                " * Infinito     : oo     (Letra 'o' x2)\n"
+                " * Menos inf.   : -oo\n"
+                " * Seno         : sin(x)\n"
+                " * Coseno       : cos(x)\n"
+                " * Tangente     : tan(x)\n"
+                " * Exponencial  : exp(x)\n"
+                " * Logaritmo    : log(x)\n"
+                " * V. Absoluto  : abs(x)\n"
+                " * Número Pi    : pi\n"
+            )
+            lbl_texto = ctk.CTkLabel(frame_guia, text=texto_ayuda, font=("Courier New", 13), text_color="black", justify="left")
+            lbl_texto.pack(pady=5, padx=20, anchor="w")
+
+            btn_ok = ctk.CTkButton(frame_guia, text="ENTENDIDO", **estilo_boton, command=ventana_guia.destroy)
+            btn_ok.pack(pady=(15, 20))
+            
+        else:
+            # Si la ventana ya existe, simplemente le damos el foco (la iluminamos)
+            ventana_guia.focus()
+
+    # Botón Guía en la barra superior
+    boton_guia = ctk.CTkButton(frame_barra, text="[?] Guía", fg_color="black", text_color="white", hover_color="#555555", corner_radius=0, border_width=0, font=("Courier New", 12, "bold"), width=80, command=abrir_guia)
+    boton_guia.pack(side="right", padx=(0, 5))
+    
+    
+    # =========================================================
+    # --- Controles ---
     frame_controles = ctk.CTkFrame(frame, fg_color="transparent")
     frame_controles.pack(pady=20, padx=20, fill="x")
 

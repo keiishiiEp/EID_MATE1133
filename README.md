@@ -18,8 +18,8 @@ El código fuente ha sido modularizado para separar la lógica matemática de la
 
 * `main.py`: Archivo principal de ejecución. Administra la navegación y los estilos globales de la aplicación.
 * `logica.py`: Motor matemático aislado. Recibe strings, evalúa límites laterales y generales con SymPy, y devuelve diccionarios con coordenadas validadas.
-* `vista_inicio.py`: Módulo que contiene la estructura visual de la pantalla de bienvenida.
-* `vista_graficadora.py`: Módulo que integra los controles de entrada y el Canvas de Matplotlib.
+* `inicio.py`: Módulo que contiene la estructura visual de la pantalla de bienvenida.
+* `graficadora.py`: Módulo que integra los controles de entrada y el Canvas de Matplotlib.
 
 ---
 ## Equipo de desarrollo
