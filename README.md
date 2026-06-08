@@ -22,6 +22,11 @@ El código fuente ha sido modularizado para separar la lógica matemática de la
 * `graficadora.py`: Módulo que integra los controles de entrada y el Canvas de Matplotlib.
 
 ---
+## Historial de actualizaciones (v1.1.0)
+Hemos actualizado el motor de cálculo matemático para implementar aproximación numérica manual, cumpliendo con el desarrollo algorítmico exigido. Se ha mejorado la experiencia de usuario con una guía de sintaxis dinámica y una consola de carga simulada. 
+Para ver el detalle técnico, visita nuestra [Wiki del proyecto](https://github.com/keiishiiEp/EID_MATE1133/wiki).
+
+---
 ## Equipo de desarrollo
 * **Keisy D. Epul Landero (https://github.com/keiishiiEp)**
 * **María R. Henríquez Cayuqueo (https://github.com/mhenriquez2026-maker)**
