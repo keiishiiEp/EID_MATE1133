@@ -7,39 +7,35 @@ def procesar_limite(func_str, h_str):
         funcion = sp.sympify(func_str)
         h_val = sp.sympify(h_str)
         
-        # Calcular el límite general y laterales
-        limite_resultado = sp.limit(funcion, x, h_val)
-        lim_izq = sp.limit(funcion, x, h_val, dir='-')
-        lim_der = sp.limit(funcion, x, h_val, dir='+')
+        # 1. Lógica manual
+        def calcular_limite_manual(direccion):
+            delta = 1e-7
+            punto = float(h_val) - delta if direccion == '-' else float(h_val) + delta
+            try:
+                return float(funcion.subs(x, punto).evalf())
+            except:
+                return None
+
+        lim_izq = calcular_limite_manual('-')
+        lim_der = calcular_limite_manual('+')
+        limite_resultado = sp.limit(funcion, x, h_val) #validar 
         
+        # 2. Deteccion de tipo
         tipo_limite = "Evaluación Directa"
         salto = False
-        
-        # Detecta tipo de limite
-        if lim_izq != lim_der and lim_izq.is_real and lim_der.is_real:
+        if lim_izq is not None and lim_der is not None and abs(lim_izq - lim_der) > 0.1:
             tipo_limite = "Discontinuidad de Salto"
             salto = True
             limite_resultado = "No existe (Saltos distintos)"
-        elif h_val == sp.oo or h_val == -sp.oo:
+        elif h_val.is_infinite:
             tipo_limite = "Límite al Infinito"
-        elif limite_resultado == sp.oo or limite_resultado == -sp.oo or limite_resultado == sp.zoo:
+        elif str(limite_resultado) in ['oo', '-oo', 'zoo']:
             tipo_limite = "Límite Infinito (Diverge)"
-        else:
-            try:
-                eval_directa = funcion.subs('x', h_val)
-                if eval_directa == sp.nan or eval_directa == sp.zoo:
-                    tipo_limite = "Indeterminación"
-            except Exception:
-                tipo_limite = "Indeterminación"
         
-        x_vals = []
-        y_vals = []
-        
-        if h_val == sp.oo:
-            inicio, paso, puntos = 0, 0.1, 500
-            marcar_asintota, h_float = False, None
-        elif h_val == -sp.oo:
-            inicio, paso, puntos = -50, 0.1, 500
+        # 3. Graficación
+        x_vals, y_vals = [], []
+        if h_val.is_infinite:
+            inicio, paso, puntos = (0, 0.1, 500) if h_val > 0 else (-50, 0.1, 500)
             marcar_asintota, h_float = False, None
         else:
             h_float = float(h_val)
@@ -48,54 +44,25 @@ def procesar_limite(func_str, h_str):
 
         for i in range(puntos + 1):
             val_x = inicio + (i * paso)
-            
-            # Si estamos en el punto h y hay un salto, insertamos un pequeño vacío
-            if marcar_asintota and abs(val_x - h_float) < 1e-9:
+            if marcar_asintota and abs(val_x - h_float) < 0.01:
                 x_vals.append(val_x)
-                y_vals.append(math.nan) # Rompe la línea
+                y_vals.append(math.nan)
                 continue
-                
             try:
-                resultado_eval = funcion.subs('x', val_x).evalf()
-                val_y = float(resultado_eval)
+                y = float(funcion.subs(x, val_x).evalf())
                 x_vals.append(val_x)
-                y_vals.append(val_y)
-            except Exception:
+                y_vals.append(y)
+            except:
                 continue 
-            
-            # ====================================================
-        # Validación - Verifica si se generaron puntos numéricos
-        y_validos_test = [y for y in y_vals if not math.isnan(y)]
-        
-        if not y_validos_test:
-            raise ValueError("Expresión no válida o no reconocible numéricamente.")
-        # Evaluamos si el punto exacto f(h) existe
-        punto_exacto = None
-        try:
-            eval_h = funcion.subs(x, h_float).evalf()
-            if eval_h.is_real:
-                punto_exacto = float(eval_h)
-        except Exception:
-            pass
 
-        # Conversor seguro para límites oscilantes
-        def a_float(val):
-            try: return float(val)
-            except Exception: return None
+        # 4. Validación final
+        if not [y for y in y_vals if not math.isnan(y)]:
+            raise ValueError("Expresión no válida.")
 
         return {
-            "exito": True,
-            "limite": str(limite_resultado),
-            "x_vals": x_vals,
-            "y_vals": y_vals,
-            "marcar_asintota": marcar_asintota,
-            "h_float": h_float,
-            "tipo_limite": tipo_limite,
-            "salto": salto,
-            "lim_izq": a_float(lim_izq),
-            "lim_der": a_float(lim_der),
-            "punto_exacto": punto_exacto
+            "exito": True, "limite": str(limite_resultado), "x_vals": x_vals, "y_vals": y_vals,
+            "marcar_asintota": marcar_asintota, "h_float": h_float, "tipo_limite": tipo_limite,
+            "salto": salto, "lim_izq": lim_izq, "lim_der": lim_der, "punto_exacto": None
         }
-        
     except Exception as e:
         return {"exito": False, "error": str(e)}
