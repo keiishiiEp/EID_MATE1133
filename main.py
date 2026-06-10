@@ -1,29 +1,34 @@
-import customtkinter as ctk
+import customtkinter as ctk # Importamos CustomTkinter para crear la interfaz gráfica.
 
-from inicio import crear_pantalla_inicio
-from graficadora import crear_pantalla_graficadora
+from inicio import crear_pantalla_inicio # Importamos la función que construye la pantalla de inicio.
+from graficadora import crear_pantalla_graficadora # Importamos la función que construye la pantalla de la graficadora.
 
-# --- Config ventana---
-ventana = ctk.CTk()
-ventana.geometry("900x700")
-ventana.title("Evaluador de Límites")
-ventana.configure(fg_color="#D1C9D6")
+# --- Config ventana principal---
+ventana = ctk.CTk() # Creamos la ventana principal.
+ventana.geometry("900x700") # Definimos el tamaño inicial de la ventana
+ventana.title("Evaluador de Límites") # Asignamos un título a la ventana.
+ventana.configure(fg_color="#D1C9D6") # Establecemos el color de fondo.
 
-# --- Estilos ---
-fuente_retro = ("Courier New", 13, "bold")
-fuente_titulo = ("Courier New", 22, "bold")
+# --- Estilos compartidos ---
+fuente_retro = ("Courier New", 13, "bold") # Fuente para textos generales.
+fuente_titulo = ("Courier New", 22, "bold") # Fuente para títulos.
 
+# Estilo base para los frames de la interfaz.
 estilo_frame = {"fg_color": "#D1D1D0", "border_width": 3, "border_color": "black", "corner_radius": 0}
+# Estilo base para los botones.
 estilo_boton = {"fg_color": "#EAE4E9", "text_color": "black", "border_width": 2, "border_color": "black", "corner_radius": 0, "hover_color": "#C4BCC9", "font": fuente_retro}
+# Estilo base para las entradas de texto.
 estilo_entrada = {"fg_color": "white", "text_color": "black", "border_width": 2, "border_color": "black", "corner_radius": 0, "font": fuente_retro}
 
-# --- Logica de Nav ---
+# --- Lógica de Navegación ---
 def ir_a_graficadora():
-    pantalla_inicio.pack_forget()
+    pantalla_inicio.pack_forget() # Ocultamos la pantalla de inicio.
+    # Mostramos la pantalla de la graficadora.
     pantalla_graficadora.pack(pady=30, padx=30, fill="both", expand=True)
 
 def regresar_a_inicio():
-    pantalla_graficadora.pack_forget()
+    pantalla_graficadora.pack_forget() # Ocultamos la pantalla de la graficadora.
+    # Volvemos a mostrar la pantalla de inicio.
     pantalla_inicio.pack(pady=30, padx=30, fill="both", expand=True)
 
 # --- Pantallas ---
