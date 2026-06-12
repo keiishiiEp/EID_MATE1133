@@ -11,7 +11,7 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     frame = ctk.CTkFrame(ventana_maestra, **estilo_frame)
  
     # --- Barra superior---
-    frame_barra = ctk.CTkFrame(frame, fg_color="black", corner_radius=0, height=30)
+    frame_barra = ctk.CTkFrame(frame, fg_color="#3B1F6B", corner_radius=0, height=30)
     frame_barra.pack(fill="x", padx=2, pady=2)
 
     #Contenedor principal que divide la interfaz en contenido y panel lateral.
@@ -163,7 +163,7 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
             ventana_guia.focus()
 
     # Botón Guía en la barra superior
-    boton_guia = ctk.CTkButton(frame_barra, text="[?] Guía", fg_color="black", text_color="white", hover_color="#555555", corner_radius=0, border_width=0, font=("Courier New", 12, "bold"), width=80, command=abrir_guia)
+    boton_guia = ctk.CTkButton(frame_barra, text="[?] Guía", fg_color="#3B1F6B", text_color="#E8D5FF", hover_color="#555555", corner_radius=0, border_width=0, font=("Courier New", 12, "bold"), width=80, command=abrir_guia)
     boton_guia.pack(side="right", padx=(0, 5))
     
     
@@ -185,13 +185,15 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     # Botón que ejecuta el cálculo del límite
     boton_calcular = ctk.CTkButton(frame_controles, text="Ejecutar", **estilo_boton)
     boton_calcular.pack(side="left", padx=10)
+    boton_limpiar = ctk.CTkButton(frame_controles, text="Limpiar", **estilo_boton)
+    boton_limpiar.pack(side="left", padx=10)
 
     # Etiqueta donde se muestra el resultado o mensajes de error
     etiqueta_resultado = ctk.CTkLabel(frame_contenido, text="> Esperando parámetros...", font=fuente_retro, text_color="black")
     etiqueta_resultado.pack(pady=5, anchor="w", padx=30)
 
     # --- Área gráfico ---
-    frame_canvas = ctk.CTkFrame(frame_contenido, border_width=3, border_color="black", corner_radius=0)
+    frame_canvas = ctk.CTkFrame(frame_contenido, border_width=3, border_color="#7E57C2", corner_radius=0)
     frame_canvas.pack(pady=15, padx=30, expand=True, fill="both")
 
     # Creación de la figura y los ejes del gráfico
@@ -207,8 +209,18 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     toolbar = NavigationToolbar2Tk(canvas, frame_canvas)
     toolbar.update()
 
-    # Función interna que procesa los datos ingresados y actualiza la gráfica
-    def accion_calcular():  
+    #Limpiar
+    def accion_limpiar():
+        entrada_funcion.delete(0, "end")
+        entrada_h.delete(0, "end")
+        ax.clear()
+        ax.set_facecolor("#F0ECF8")
+        fig.patch.set_facecolor("#F0ECF8")
+        etiqueta_resultado.configure(text="> Esperando parámetros...")
+        canvas.draw()
+        
+    # --- F interna de cálculo ---
+    def accion_calcular():
         func_str = entrada_funcion.get()
         h_str = entrada_h.get()
         resultado = procesar_limite(func_str, h_str)
@@ -225,18 +237,18 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
             fig.patch.set_facecolor("#F4F0E6")
             
             # Dibuja la función
-            ax.plot(resultado["x_vals"], resultado["y_vals"], color='black', linewidth=2, label=f'f(x) = {func_str}')
+            ax.plot(resultado["x_vals"], resultado["y_vals"], color='#5C3D8F', linewidth=2, label=f'f(x) = {func_str}')
             
             # Si corresponde, marca la recta vertical en x = h
             if resultado["marcar_asintota"]:
-                ax.axvline(x=resultado["h_float"], color='red', linestyle='--', linewidth=2, label=f'h = {resultado["h_float"]}')
+                ax.axvline(x=resultado["h_float"], color='#C084A0', linestyle='--', linewidth=2, label=f'h = {resultado["h_float"]}')
                 
                 # Si hay salto, se marcan los límites laterales y el valor exacto si existe
                 if resultado["salto"]:
-                    ax.plot(resultado["h_float"], resultado["lim_izq"], marker='o', markersize=8, markerfacecolor='#F4F0E6', markeredgecolor='black', linestyle='None')
-                    ax.plot(resultado["h_float"], resultado["lim_der"], marker='o', markersize=8, markerfacecolor='#F4F0E6', markeredgecolor='black', linestyle='None')
+                    ax.plot(resultado["h_float"], resultado["lim_izq"], marker='o', markersize=8, markerfacecolor='#F0ECF8', markeredgecolor='black', linestyle='None')
+                    ax.plot(resultado["h_float"], resultado["lim_der"], marker='o', markersize=8, markerfacecolor='#F0ECF8', markeredgecolor='black', linestyle='None')
                     if resultado["punto_exacto"] is not None:
-                        ax.plot(resultado["h_float"], resultado["punto_exacto"], marker='o', markersize=8, color='black', linestyle='None')
+                        ax.plot(resultado["h_float"], resultado["punto_exacto"], marker='o', markersize=8, color='#5C3D8F', linestyle='None')
             
             # Agrega a la leyenda el tipo de límite detectado
             ax.plot([], [], ' ', label=f'Tipo: {resultado["tipo_limite"]}')
@@ -262,7 +274,7 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
             legend.get_frame().set_linewidth(2)
             legend.get_frame().set_facecolor('white')
             
-            ax.grid(True, color="black", linestyle=":", linewidth=1)
+            ax.grid(True, color="#B8A9D4", linestyle=":", linewidth=1)
             canvas.draw()
         else:
             # Mensaje mostrado si la expresión ingresada no es válida
@@ -274,6 +286,7 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
 
     # Asocia el botón con la función de cálculo
     boton_calcular.configure(command=accion_calcular)
+    boton_limpiar.configure(command=accion_limpiar)
 
     # Retorna el frame completo para ser usado en la ventana principal
     return frame    
