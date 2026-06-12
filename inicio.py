@@ -172,7 +172,7 @@ def crear_pantalla_inicio(ventana_maestra, comando_iniciar, estilo_frame, fuente
      # Creamos un texto al pie de la pantalla con información institucional y la versión del programa.
     footer = ctk.CTkLabel(
         frame, 
-        text="Universidad Católica de Temuco | Ingeniería Civil en Informática | build v1.1.0", 
+        text="Universidad Católica de Temuco | Ingeniería Civil en Informática | build v1.1.1", 
         font=("Courier New", 10), 
         text_color="#555555"
     )
