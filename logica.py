@@ -1,4 +1,4 @@
- import sympy as sp # Importamos SymPy para trabajar con expresiones matemáticas simbólicas.
+import sympy as sp # Importamos SymPy para trabajar con expresiones matemáticas simbólicas.
 import math # Importamos math para usar herramientas numéricas.
 
 # Esta función recibe:la función escrita como texto y el punto al que x tiende tambien como texto.

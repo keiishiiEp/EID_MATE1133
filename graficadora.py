@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import matplotlib.pyplot as plt
 import math
+import sympy as sp
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from logica import procesar_limite
@@ -8,10 +9,35 @@ from logica import procesar_limite
 # Crea la pantalla donde el usuario ingresa una función, calcula su límite y visualiza la gráfica resultante.
 def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, estilo_entrada, estilo_boton, fuente_retro):
     frame = ctk.CTkFrame(ventana_maestra, **estilo_frame)
-
+ 
     # --- Barra superior---
     frame_barra = ctk.CTkFrame(frame, fg_color="black", corner_radius=0, height=30)
     frame_barra.pack(fill="x", padx=2, pady=2)
+
+    #Contenedor principal que divide la interfaz en contenido y panel lateral.
+    frame_contenedor = ctk.CTkFrame(frame, fg_color="transparent")
+    frame_contenedor.pack(fill="both", expand=True, padx=20, pady=20)
+
+    # Contiene la parte principal de la pantalla: entradas, resultados y gráfico.
+    frame_contenido = ctk.CTkFrame(frame_contenedor, fg_color="transparent")
+    frame_contenido.pack(side="left", fill="both", expand=True, padx=(0,10))
+
+    # Se agrega un panel lateral a la derecha para mostrar el paso a paso del cálculo del límite. 
+    frame_pasos = ctk.CTkFrame(frame_contenedor, width=280, **estilo_frame)
+    frame_pasos.pack(side="right", fill="y", padx=(10, 0))
+    frame_pasos.pack_propagate(False)
+
+    # Título del panel lateral del paso a paso.
+    lbl_pasos = ctk.CTkLabel(frame_pasos, text="Paso a paso", font=("Courier New", 16, "bold"), text_color="black")
+    lbl_pasos.pack(pady=(12, 6))
+
+    # Para escribir el procedimiento del límite en varias líneas.
+    textbox_pasos = ctk.CTkTextbox(frame_pasos, width=260, height=520, font=("Courier New", 12), fg_color="white", text_color="black", border_width=2, border_color="black", corner_radius=0, wrap="word")
+    textbox_pasos.pack(padx=10, pady=(0, 10), fill="both", expand=True)
+
+    # Texto inicial del panel
+    textbox_pasos.insert("0.0", "El paso a paso del límite. \n")
+    textbox_pasos.configure(state="disabled")
 
     # Título de la barra
     lbl_barra = ctk.CTkLabel(frame_barra, text=" Graficar_Limites.exe", font=("Courier New", 12, "bold"), text_color="white")
@@ -21,6 +47,69 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     boton_volver = ctk.CTkButton(frame_barra, text="[X] Cerrar", fg_color="black", text_color="white", hover_color="red", corner_radius=0, border_width=0, font=("Courier New", 12, "bold"), width=80, command=comando_volver)
     boton_volver.pack(side="right")
 
+    # --- Escribe el paso a paso en el panel lateral ---
+    def mostrar_pasos(func_str, h_str, resultado):
+        textbox_pasos.configure(state="normal")
+        textbox_pasos.delete("0.0", "end")
+
+        # Paso 1: mostrar la función ingresada por el usuario.
+        textbox_pasos.insert("end", "PASO 1\n")
+        textbox_pasos.insert("end", f"Se lee la función ingresada:\n")
+        textbox_pasos.insert("end", f"f(x) = {func_str}\n\n")
+
+        # Paso 2: indicar el punto al que tiende la variable.
+        textbox_pasos.insert("end", "PASO 2\n")
+        textbox_pasos.insert("end", f"Se identifica el punto al que tiende x:\n")
+        textbox_pasos.insert("end", f"x -> {h_str}\n\n")
+
+        try:
+            x = sp.symbols('x')
+            funcion = sp.sympify(func_str)
+            h_val = sp.sympify(h_str)
+
+            textbox_pasos.insert("end", "PASO 3\n")
+            textbox_pasos.insert("end", "Se revisa el comportamiento por ambos lados del punto.\n")
+
+            # Si no es infinito, intentamos mostrar límites laterales simbólicos
+            if not h_val.is_infinite:
+                try:
+                    lim_izq_sym = sp.limit(funcion, x, h_val, '-')
+                    textbox_pasos.insert("end", f"Límite por la izquierda: {lim_izq_sym}\n")
+                except Exception:
+                    textbox_pasos.insert("end", "Límite por la izquierda: no se pudo calcular simbólicamente.\n")
+
+                try:
+                    lim_der_sym = sp.limit(funcion, x, h_val, '+')
+                    textbox_pasos.insert("end", f"Límite por la derecha: {lim_der_sym}\n")
+                except Exception:
+                    textbox_pasos.insert("end", "Límite por la derecha: no se pudo calcular simbólicamente.\n")
+            else:
+                textbox_pasos.insert("end", "El punto es infinito, así que se analiza el comportamiento hacia el infinito.\n")
+
+            # Paso 4: mostrar el tipo de límite detectado por la lógica del programa.
+            textbox_pasos.insert("end", "\nPASO 4\n")
+            textbox_pasos.insert("end", f"Tipo detectado: {resultado['tipo_limite']}\n")
+
+            # Si la lógica detectó salto, se explica con los valores manuales
+            if resultado["salto"]:
+                textbox_pasos.insert("end", "Los límites laterales son distintos.\n")
+                textbox_pasos.insert("end", f"Aproximación izquierda: {resultado['lim_izq']}\n")
+                textbox_pasos.insert("end", f"Aproximación derecha: {resultado['lim_der']}\n")
+                textbox_pasos.insert("end", "Por eso el límite no existe como valor único.\n")
+            else:
+                textbox_pasos.insert("end", "No se detectó discontinuidad de salto.\n")
+
+            # Paso 5: mostrar el resultado final del límite.
+            textbox_pasos.insert("end", "\nPASO 5\n")
+            textbox_pasos.insert("end", f"Resultado final del límite: {resultado['limite']}\n")
+
+        # Si ocurre un error, se informa en el panel lateral.
+        except Exception as e:
+            textbox_pasos.insert("end", "\nNo fue posible construir el paso a paso completo.\n")
+            textbox_pasos.insert("end", f"Detalle: {str(e)}\n")
+
+        # Evita la edición manual.
+        textbox_pasos.configure(state="disabled")
     
     # =========================================================
     # Función ventana flotante- control de instancia
@@ -82,7 +171,7 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     # --- Controles ---
 
     # Contenedor de los controles de entrada
-    frame_controles = ctk.CTkFrame(frame, fg_color="transparent")
+    frame_controles = ctk.CTkFrame(frame_contenido, fg_color="transparent")
     frame_controles.pack(pady=20, padx=20, fill="x")
 
     # Entrada para la función matemática
@@ -98,11 +187,11 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
     boton_calcular.pack(side="left", padx=10)
 
     # Etiqueta donde se muestra el resultado o mensajes de error
-    etiqueta_resultado = ctk.CTkLabel(frame, text="> Esperando parámetros...", font=fuente_retro, text_color="black")
+    etiqueta_resultado = ctk.CTkLabel(frame_contenido, text="> Esperando parámetros...", font=fuente_retro, text_color="black")
     etiqueta_resultado.pack(pady=5, anchor="w", padx=30)
 
     # --- Área gráfico ---
-    frame_canvas = ctk.CTkFrame(frame, border_width=3, border_color="black", corner_radius=0)
+    frame_canvas = ctk.CTkFrame(frame_contenido, border_width=3, border_color="black", corner_radius=0)
     frame_canvas.pack(pady=15, padx=30, expand=True, fill="both")
 
     # Creación de la figura y los ejes del gráfico
@@ -120,12 +209,15 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
 
     # Función interna que procesa los datos ingresados y actualiza la gráfica
     def accion_calcular():  
+        func_str = entrada_funcion.get()
         h_str = entrada_h.get()
         resultado = procesar_limite(func_str, h_str)
         
         # Si el cálculo fue exitoso, muestra resultado y grafica la función
         if resultado["exito"]:
             etiqueta_resultado.configure(text=f"> Resultado del límite: {resultado['limite']}")
+            
+            mostrar_pasos(func_str, h_str, resultado)
             
             # Limpia el gráfico anterior
             ax.clear()
@@ -175,6 +267,10 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
         else:
             # Mensaje mostrado si la expresión ingresada no es válida
             etiqueta_resultado.configure(text="> ERROR: Revisa la expresión.")
+            textbox_pasos.configure(state="normal")
+            textbox_pasos.delete("0.0", "end")
+            textbox_pasos.insert("0.0", "No se pudo resolver el límite.\n\nRevisa la función o el valor de h.")
+            textbox_pasos.configure(state="disabled")
 
     # Asocia el botón con la función de cálculo
     boton_calcular.configure(command=accion_calcular)
