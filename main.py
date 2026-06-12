@@ -22,10 +22,6 @@ ventana.configure(fg_color="#EDE7F6")
 fuente_retro = ("Courier New", 13, "bold") # Fuente para textos generales.
 fuente_titulo = ("Courier New", 22, "bold") # Fuente para títulos.
 
-# Estilo base para los frames de la interfaz.
-estilo_frame = {"fg_color": "#D1D1D0", "border_width": 3, "border_color": "black", "corner_radius": 0}
-# Estilo base para los botones.
-estilo_boton = {"fg_color": "#EAE4E9", "text_color": "black", "border_width": 2, "border_color": "black", "corner_radius": 0, "hover_color": "#C4BCC9", "font": fuente_retro}
 # Estilo base para las entradas de texto.
 estilo_frame = {"fg_color": "#E8E0F0", "border_width": 3, "border_color": "#7E57C2", "corner_radius": 0}
 estilo_boton = {"fg_color": "#D4C5E8", "text_color": "#3B1F6B", "border_width": 2, "border_color": "#7E57C2", "corner_radius": 0, "hover_color": "#B8A9D4", "font": fuente_retro}

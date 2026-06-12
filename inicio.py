@@ -76,7 +76,7 @@ def crear_pantalla_inicio(ventana_maestra, comando_iniciar, estilo_frame, fuente
         frame, 
         text=">Sistema en espera de inicio...", 
         font=("Courier New", 12), 
-        text_color="#00FF00", 
+        text_color="#7E57C2", 
         fg_color="black",     
         justify="left", 
         anchor="w", 

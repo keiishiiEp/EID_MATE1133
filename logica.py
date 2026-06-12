@@ -8,7 +8,6 @@ def procesar_limite(func_str, h_str):
         funcion = sp.sympify(func_str) # Convertimos el texto de la función en una expresión matemática.
         h_val = sp.sympify(h_str) # Convertimos el texto del punto h en un valor simbólico.
         
-
         # 1. Lógica manual
         # Esta función interna aproxima el límite por izquierda o por derecha evaluando la función en un punto muy cercano a h.
         def calcular_limite_manual(direccion):
