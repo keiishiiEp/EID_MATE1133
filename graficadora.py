@@ -61,7 +61,7 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
         textbox_pasos.insert("end", "PASO 2\n")
         textbox_pasos.insert("end", f"Se identifica el punto al que tiende x:\n")
         textbox_pasos.insert("end", f"x -> {h_str}\n\n")
-
+     
         try:
             x = sp.symbols('x')
             funcion = sp.sympify(func_str)
@@ -219,6 +219,12 @@ def crear_pantalla_graficadora(ventana_maestra, comando_volver, estilo_frame, es
         etiqueta_resultado.configure(text="> Esperando parámetros...")
         canvas.draw()
         
+        #Borar paso a paso
+        textbox_pasos.configure(state="normal")
+        textbox_pasos.delete("0.0", "end")
+        textbox_pasos.insert("0.0", "El paso a paso del límite. \n")
+        textbox_pasos.configure(state="disabled")
+    
     # --- F interna de cálculo ---
     def accion_calcular():
         func_str = entrada_funcion.get()
